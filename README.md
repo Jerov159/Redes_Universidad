@@ -1,170 +1,146 @@
-# 🎓 Red de Telecomunicaciones Universitaria - Algoritmo de Dijkstra
+## 🎓 Red de Telecomunicaciones Universitaria – Algoritmo de Dijkstra
 
-## 📋 Descripción del Proyecto
+## 📋 Descripción del proyecto
 
-Este proyecto implementa el **Algoritmo de Dijkstra** aplicado a un caso práctico real: una **red de fibra óptica** que conecta 10 edificios de un campus universitario. Los pesos de las aristas representan la **latencia en milisegundos** entre edificios.
+Este proyecto implementa el **Algoritmo de Dijkstra** aplicado a una **red de fibra óptica** que conecta 10 edificios de un campus universitario.  
+Cada arista del grafo representa una conexión de fibra con un **peso en milisegundos (latencia)**, y el objetivo es encontrar rutas con la menor latencia posible entre dos edificios.
 
-## 🏛️ Arquitectura del Proyecto
+## 🏛️ Arquitectura del proyecto
 
-```
-Tele_Univ/
+Estructura real del código en este repositorio (`Dijkstra`):
+
+```text
+Dijkstra/
 │
 ├── src/
 │   ├── modelo/
-│   │   ├── Edificio.java       # Clase que representa un vértice (edificio)
-│   │   └── Conexion.java       # Clase que representa una arista (conexión)
+│   │   └── Edificio.java            # Representa un vértice (edificio del campus)
 │   │
 │   ├── grafo/
-│   │   └── GrafoRedUniversidad.java  # Estructura del grafo con matriz de adyacencia
+│   │   └── GrafoRedUniversidad.java # Grafo ponderado no dirigido (matriz de adyacencia)
 │   │
 │   ├── algoritmo/
-│   │   ├── AlgoritmoDijkstra.java    # Implementación del algoritmo
-│   │   └── ResultadoDijkstra.java    # Encapsula el resultado del algoritmo
+│   │   └── AlgoritmoDijkstra.java   # Implementación del algoritmo de Dijkstra
 │   │
 │   └── aplicacion/
-│       └── RedUniversidadApp.java    # Aplicación principal con menú interactivo
+│       └── RedUniversidadApp.java   # Aplicación de consola con menú interactivo
 │
 └── README.md
 ```
 
-## 🗺️ Topología de la Red
+## 📚 Edificios del campus (según el código)
 
-```
-                    [0] Rectoría
-                    /    |    \
-                 2.5   1.8    3.2
-                 /      |       \
-     [1] Biblioteca--[2] Ing.--[3] Ciencias
-            |    \     |    /       |
-           1.5   2.0  1.2  2.8     1.9
-            |      \   |  /         |
-     [4] Medicina--[5] Data Center--[6] Derecho
-            |           |    \        |
-           2.2         0.8   1.5     2.1
-            |           |      \      |
-     [7] Deportes--[8] Artes--[9] Admin
-                1.7      2.3
-```
+En el grafo se modelan 10 edificios, identificados como B1…B10, con los nombres definidos en `RedUniversidadApp`:
 
-## 📚 Edificios del Campus
+| ID | Etiqueta en consola | Nombre lógico           |
+|----|---------------------|-------------------------|
+| 0  | B1 - Rectoria       | Rectoría                |
+| 1  | B2 - Ingenieria     | Ingeniería              |
+| 2  | B3 - Biblioteca     | Biblioteca              |
+| 3  | B4 - Laboratorios   | Laboratorios            |
+| 4  | B5 - Aulas Generales| Aulas Generales         |
+| 5  | B6 - Data Center    | Data Center             |
+| 6  | B7 - Medicina       | Medicina                |
+| 7  | B8 - Deportes       | Deportes                |
+| 8  | B9 - Ciencias       | Ciencias                |
+| 9  | B10 - Administrativo| Administrativo          |
 
-| ID | Edificio | Descripción |
-|----|----------|-------------|
-| 0 | Rectoría | Edificio administrativo principal |
-| 1 | Biblioteca Central | Recursos académicos y estudio |
-| 2 | Facultad de Ingeniería | Carreras de ingeniería |
-| 3 | Facultad de Ciencias | Ciencias básicas y laboratorios |
-| 4 | Facultad de Medicina | Ciencias de la salud |
-| 5 | Data Center | Centro de datos y servidores (Hub central) |
-| 6 | Facultad de Derecho | Ciencias jurídicas |
-| 7 | Complejo Deportivo | Instalaciones deportivas |
-| 8 | Facultad de Artes | Bellas artes y humanidades |
-| 9 | Edificio Administrativo | Servicios administrativos |
+## 🔗 Conexiones de fibra (latencias en ms)
 
-## 🔬 El Algoritmo de Dijkstra
+Las conexiones definidas en `RedUniversidadApp.inicializarRed()` son:
 
-### ¿Qué es?
-El algoritmo de Dijkstra encuentra el **camino más corto** desde un vértice origen hacia todos los demás vértices en un grafo con pesos no negativos.
+- B1 ↔ B10: 3.1 ms  
+- B1 ↔ B5: 4.0 ms  
+- B1 ↔ B2: 2.1 ms  
+- B2 ↔ B5: 3.6 ms  
+- B2 ↔ B3: 1.8 ms  
+- B3 ↔ B4: 2.5 ms  
+- B3 ↔ B7: 4.2 ms  
+- B4 ↔ B5: 3.0 ms  
+- B4 ↔ B8: 3.8 ms  
+- B5 ↔ B6: 2.2 ms  
+- B5 ↔ B9: 5.0 ms  
+- B6 ↔ B10: 4.5 ms  
+- B6 ↔ B7: 2.9 ms  
+- B7 ↔ B8: 2.7 ms  
+- B7 ↔ B9: 3.0 ms  
+- B8 ↔ B9: 3.5 ms  
+- B9 ↔ B10: 2.4 ms  
 
-### Pasos del Algoritmo
+## 🔬 El algoritmo de Dijkstra
 
-1. **Inicialización:**
+El algoritmo de Dijkstra encuentra el **camino más corto** desde un vértice origen hacia todos los demás vértices en un grafo con pesos no negativos.  
+En este proyecto se implementa con **matriz de adyacencia**, lo que da una complejidad temporal de \\(O(V^2)\\).
+
+**Pasos principales:**
+
+1. **Inicialización**
    - `distancia[origen] = 0`
    - `distancia[resto] = ∞`
-   - Todos los vértices están "no visitados"
+   - Todos los vértices están no visitados.
+2. **Iteración**
+   - Seleccionar el vértice no visitado con menor distancia acumulada.
+   - Marcarlo como visitado.
+   - Relajar sus aristas: si `distancia[u] + peso(u,v) < distancia[v]`, se actualiza `distancia[v]` y el predecesor.
+3. **Resultado**
+   - Arreglo de distancias mínimas `dist`.
+   - Arreglo de predecesores `pred` para reconstruir caminos.
 
-2. **Iteración:**
-   - Seleccionar el vértice **no visitado** con menor distancia
-   - Marcarlo como **visitado**
-   - Para cada vecino no visitado:
-     - Si `distancia_actual + peso_arista < distancia[vecino]`:
-       - Actualizar `distancia[vecino]`
-       - Guardar predecesor
+**Complejidad:**
+- **Tiempo:** \\(O(V^2)\\)  
+- **Espacio:** \\(O(V)\\) para distancias y predecesores.
 
-3. **Resultado:**
-   - Array de distancias mínimas
-   - Array de predecesores para reconstruir caminos
+## 🚀 Cómo compilar y ejecutar
 
-### Complejidad
-- **Tiempo:** O(V²) con matriz de adyacencia
-- **Espacio:** O(V)
-
-## 🚀 Cómo Compilar y Ejecutar
-
-### Opción 1: Desde línea de comandos
+### 1. Desde línea de comandos (Java instalado en el PATH)
 
 ```bash
-# Navegar al directorio del proyecto
-cd Tele_Univ
+# Ubicarse en el directorio del proyecto
+cd Dijkstra
 
-# Compilar todos los archivos
-javac -d bin src/modelo/*.java src/grafo/*.java src/algoritmo/*.java src/aplicacion/*.java
-
-# Ejecutar la aplicación
-java -cp bin aplicacion.RedUniversidadApp
-```
-
-### Opción 2: Crear directorio bin primero
-
-```bash
-# Crear directorio de salida
+# (Opcional) Crear el directorio de salida
 mkdir bin
 
-# Compilar
+# Compilar todas las clases
 javac -d bin src/modelo/*.java src/grafo/*.java src/algoritmo/*.java src/aplicacion/*.java
 
-# Ejecutar
+# Ejecutar la aplicación de consola
 java -cp bin aplicacion.RedUniversidadApp
 ```
 
-## 🎮 Funcionalidades
+En Windows PowerShell puedes usar los mismos comandos (ajustando la ruta según corresponda).
 
-1. **Ver edificios del campus** - Lista todos los edificios con sus descripciones
-2. **Ver conexiones de fibra óptica** - Muestra todas las conexiones y sus latencias
-3. **Ver matriz de adyacencia** - Visualiza la estructura del grafo
-4. **Encontrar ruta óptima** - Calcula el camino con menor latencia entre dos edificios
-5. **Ver todas las distancias** - Muestra la tabla de distancias mínimas desde un origen
-6. **Modo educativo** - Ejecuta Dijkstra mostrando cada paso del algoritmo
+### 2. Desde un IDE (IntelliJ IDEA, Eclipse, VS Code, etc.)
 
-## 📊 Ejemplo de Uso
+- **Importar** el proyecto como proyecto Java existente.  
+- Asegurarse de que la carpeta `src` esté marcada como *Source Root*.  
+- Configurar la clase principal (`main`) como `aplicacion.RedUniversidadApp`.  
+- Ejecutar desde el IDE.
 
-```
-╔══════════════════════════════════════════════════════════════╗
-║                  RUTA ÓPTIMA ENCONTRADA                      ║
-╚══════════════════════════════════════════════════════════════╝
+## 🎮 Funcionalidades reales del menú
 
-  📍 Origen:  Biblioteca Central
-  🎯 Destino: Edificio Administrativo
-  ⏱️  Latencia total: 4.3 ms
+La clase `RedUniversidadApp` ofrece un menú de consola con estas opciones:
 
-  RECORRIDO:
-  ──────────────────────────────────────────────────
-  🏁 [INICIO] Biblioteca Central
-       │ (2.0 ms)
-       ▼
-  📌 [1]      Data Center
-       │ (1.5 ms)
-       ▼
-  🏆 [FIN]    Edificio Administrativo
-  ──────────────────────────────────────────────────
+1. **Ver edificios**: muestra la lista B1…B10 con sus nombres.  
+2. **Ver matriz de adyacencia**: imprime la matriz de latencias entre edificios.  
+3. **Buscar ruta óptima (Dijkstra)**: pide origen y destino (1–10) y muestra el camino con menor latencia y su costo total.  
+4. **Distancias desde un edificio**: ejecuta Dijkstra desde un origen y lista la distancia mínima a todos los demás.  
+5. **Salir**: termina la aplicación.
 
-  ✅ Número de saltos: 2
-```
+## 💡 Conceptos clave
 
-## 💡 Conceptos Clave
-
-- **Grafo:** Estructura que modela relaciones entre objetos
-- **Vértice/Nodo:** Cada edificio del campus
-- **Arista/Edge:** Conexión de fibra óptica entre edificios
-- **Peso:** Latencia en milisegundos
-- **Matriz de Adyacencia:** Representación del grafo en forma matricial
-- **Algoritmo Voraz (Greedy):** Selecciona siempre la mejor opción local
+- **Grafo:** estructura que modela relaciones entre objetos (en este caso, edificios del campus).  
+- **Vértice / nodo:** cada edificio (`Edificio`).  
+- **Arista:** conexión de fibra óptica entre dos edificios.  
+- **Peso:** latencia en milisegundos.  
+- **Matriz de adyacencia:** representación matricial de las conexiones y sus pesos.  
+- **Algoritmo voraz (greedy):** estrategia que elige siempre la mejor opción local en cada paso.
 
 ## 👨‍💻 Autor
 
-Universidad - Estructuras de Datos
-Proyecto educativo sobre Grafos y Algoritmo de Dijkstra
+Universidad – Estructuras de Datos.  
+Proyecto educativo sobre grafos y algoritmo de Dijkstra aplicado a redes de telecomunicaciones.
 
 ## 📝 Licencia
 
-Este proyecto es de uso educativo y libre distribución.
+Proyecto de uso educativo y de libre distribución.
